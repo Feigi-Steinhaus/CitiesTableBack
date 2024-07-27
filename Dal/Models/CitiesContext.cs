@@ -1,0 +1,44 @@
+﻿using System;
+using System.Collections.Generic;
+using Dal.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace Dal;
+
+public partial class CitiesContext : DbContext
+{
+    public CitiesContext()
+    {
+    }
+
+    public CitiesContext(DbContextOptions<CitiesContext> options)
+        : base(options)
+    {
+    }
+
+    public virtual DbSet<City> Cities { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source= DESKTOP-E0FAPSB\\SQLEXPRESS;Initial Catalog=Cities; Trusted_Connection=True;MultipleActiveResultSets=True;Encrypt=False");
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<City>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__City__3214EC079D777917");
+
+            entity.ToTable("City");
+
+            entity.HasIndex(e => e.Name, "UQ__City__737584F65276BFFC").IsUnique();
+
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+        });
+
+        OnModelCreatingPartial(modelBuilder);
+    }
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+}
